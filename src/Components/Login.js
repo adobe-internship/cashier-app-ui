@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import "../Styles/Login.css";
 import { useHistory } from "react-router-dom";
 import axios from 'axios';
+import jwt from 'jwt-decode';
+import Api from '../api/Api';
 
 const Login = () => {
 
     const [username,setUsername] = useState("");
     const [password,setPassword] = useState("");
-    //const [token,setToken] = useState();
-    const [data,setData] = useState();
 
     const history = useHistory();
 
@@ -22,32 +22,49 @@ const Login = () => {
 
     const handleSubmit = async (event) =>
     {
-       //Fetching a call to ensure that credentials are correct
+        event.preventDefault();
 
-       let data = await loginUser({username,password});
+        let body = {"username" : username,
+        "password" :password};
 
-       debugger 
-        
-        //history.push('/userui');   
-       
-    }
+        let token;
+debugger
+        const p = Api.post('/api/auth/login', body)
+        // fetch('http://192.168.88.92:8085/api/auth/login', {method: 'POST', body: JSON.stringify(body)})  
+        // .then(r => r.json()) 
+        window.p = p
+        p.then((data) => {
+            debugger
+            console.log(data);
+            token = data.data.token;
+            localStorage.setItem("token",token);
 
-    async function loginUser(credentials)
-    {
-        return fetch("http://192.168.88.92:8085/api/auth/login",
+        let decodedToken = jwt(token);
+        localStorage.setItem("username",decodedToken.username);
+        localStorage.setItem("firstname",decodedToken.firstName);
+        localStorage.setItem("lastname",decodedToken.lastName);
+        let role = decodedToken.authorities;
+        if(role == "ROLE_ADMIN")
         {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Content-Length': credentials.length
-              }
-        })
-        .then((response) => response.json())
-        .then((data) => {
-            setData(data);
-        })
-        .catch((err) => console.log(err));
+            history.push("/adminui");
+        }
+        else if(role =="ROLE_CASHIER")
+        {
+            history.push("/userui");
+        }
+        else{
+
+        }
+          })
+          .catch((err) => console.log(err));; 
+
+          
+
+        //let token = "eyJhbGciOiJIUzI1NiJ9.eyJhdXRob3JpdGllcyI6WyJST0xFX0FETUlOIl0sInVzZXJuYW1lIjoicnViZW4iLCJmaXJzdE5hbWUiOiJSdWJlbiIsImxhc3ROYW1lIjoiQmFsYXlhbiJ9.KV7nf-M33ELZPUGWGjwEFnE-Dx_bXlZBEShRR8QeS24";
+        
+        
     }
+
     
 
     return(

@@ -19,7 +19,7 @@ import { useHistory } from "react-router-dom";
 function AdminUI(){
     const [data, setData] = useState([]);
     const history = useHistory();
-    const [showUsername, setShowUsername] = useState("Admin1");
+    const [showUsername, setShowUsername] = useState(localStorage.getItem("firstname") + " " + localStorage.getItem("lastname"));
 
     const handleLogOut = (event) => {
         

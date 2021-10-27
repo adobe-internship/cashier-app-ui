@@ -3,20 +3,30 @@ import "../App.css";
 import "../Styles/Employees.css";
 import Button from "@mui/material/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
+import axios from "axios";
+import Api from "../api/Api";
 
 function Employees({ data, setData }) {
   useEffect(() => {
-    fetch("http://localhost:8085/api/employee")
-      .then((response) => response.json())
+    // axios.get('/api/employee', {headers: {"authorization" : localStorage.getItem("token")}})
+    // fetch("http://192.168.88.92:8085/api/employee",
+    // {
+    //   method : "GET",
+    //   headers : {"authorization" : localStorage.getItem("token")}
+    // })
+    //   .then((response) => response.json())
+    Api.get('/api/employee')
       .then((data) => {
-        setData(data);
+        console.log(data)
+        setData(data.data);
       })
       .catch((err) => console.log(err));
   }, []);
 
+
   const handelOnDelete = (username) => {
-    const url = "http://localhost:8085/api/employee/delete/".concat(username);
-    fetch(url, { method: "DELETE" })
+    const url = "http://192.168.88.92:8085/api/employee/delete/".concat(username);
+    fetch(url, { method: "DELETE" , headers : {"authorization":localStorage.getItem("token")}})
       .then((res) => {
         setData(data.filter((row) => row.username !== username));
       })

@@ -15,6 +15,7 @@
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
     "axios": "^0.23.0",
+    "jwt-decode": "^3.1.2",
     "material-ui-icons": "^1.0.0-beta.36",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
@@ -46,5 +47,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "proxy": "http://192.168.88.92:8085"
 }
