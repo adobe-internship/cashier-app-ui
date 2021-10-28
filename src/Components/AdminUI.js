@@ -18,6 +18,7 @@ import AddProduct from "./AddProduct/AddProduct";
 import BarChart from "./Dashboard/BarChart";
 import { useState } from "react";
 import { useHistory } from "react-router-dom";
+import Dashboard from "./Dashboard";
 
 function AdminUI(){
   const [data, setData] = useState([]);
@@ -25,6 +26,7 @@ function AdminUI(){
   const [pro, setPro] = useState([]);
   const [pathname, setPathname] = useState('');
   const history = useHistory();
+  const [sale, setSale] = useState([]);
   console.log('pathname',pathname);
 
 
@@ -60,8 +62,9 @@ function AdminUI(){
                   <Route path="/employees">
                     <Employees data={data} setData={setData} />
                   </Route>
-                  <Route path="/dashboard">
+                  <Route path="/dashboard" setSale = {setData}>
                     <BarChart />
+                    <Dashboard sale = {sale} setSale = {setSale} />
                   </Route>
                                      
                   <Route  path="/">
@@ -85,6 +88,7 @@ function AdminUI(){
                 <Route path="/products">
                   <AddProduct setPro={setPro} />
                 </Route>
+               
                
                 
               </Switch>

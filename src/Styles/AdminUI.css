@@ -46,10 +46,14 @@ body {
 .container .logOut button{
   color: white;
   font-weight: bold;
-  background-color: lightgray;
+  background-color: #2f4050;
   border: 1px solid white;
   border-radius: 5%;
   padding: 5px 15px;
+}
+
+.container .logOut button:hover{
+  transform: scale(1.01);
 }
 
 .sidebar {

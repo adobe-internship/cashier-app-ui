@@ -1,7 +1,10 @@
 #loginMain{
     width: 100%;
     height: 100vh;
-    background-color: #222831;
+    /*background-color: #222831;*/
+    background-image: url("../resources/logo.PNG");
+    background-repeat: no-repeat;
+    background-color: #A8AEBA;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -13,8 +16,9 @@
 }
 
 #loginForm label{
-    font-family: 'Times New Roman', Times, serif;
-    color: #EEEEEE;
+    font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
+    color: white;
     font-weight: bold;
     margin: 10px;
 }
@@ -22,16 +26,25 @@
 #loginForm input{
     margin: 10px;
     padding: 5px;
-    font-family: 'Times New Roman', Times, serif;
+    font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
+    background-color: #EFEFEF;
+    border-radius: 5%;
+    border: 2px solid #A8AEBA;
+    font-weight: bold;
+    color: #A8AEBA;
 }
 
 #loginForm button{
-    font-family: 'Times New Roman', Times, serif;
+    font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
     font-weight: bold;
-    background-color: #00ADB5;
-    color: #EEEEEE;
+    background-color: white;
+    color: #A8AEBA;
     border: 0px;
     padding: 10px 15px;
     margin: 10px;
+    border-radius: 5%;
 }
+
 

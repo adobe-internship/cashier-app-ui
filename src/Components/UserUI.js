@@ -4,51 +4,14 @@ import React, {
 } from 'react';
 import "../Styles/UserUI.css";
 import { useHistory } from "react-router-dom";
+import Api from '../api/Api';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
-const INITIAL_MOCK_DATA = [{
-        id: 1,
-        name: "product1",
-        count: 10,
-        price: 100,
-    },
-    {
-        id: 2,
-        name: "product2",
-        count: 4,
-        price: 1250
-    },
-    {
-        id: 3,
-        name: "product3",
-        count: 50,
-        price: 1520
-    },
-    {
-        id: 4,
-        name: "product4",
-        count: 25,
-        price: 3950
-    },
-    {
-        id: 5,
-        name: "product5",
-        count: 18,
-        price: 5000
-    },
-    {
-        id: 6,
-        name: "product6",
-        count: 1,
-        price: 12000
-    },
-    {
-        id: 7,
-        name: "product7",
-        count: 0,
-        price: 200
-    }
-    
-]
 
 const UserUIF = () => {
 
@@ -57,23 +20,16 @@ const UserUIF = () => {
     const [managerNumber, setManagerNumber] = useState ("0XX-XX-XX-XX");
     const [searchValue, setSearchValue] = useState('');
     const [productCount, setProductCount] = useState('');
-    const [productsList, setProductsList] = useState([]);
+    const [product, setProduct] = useState({name: "",count:"",price:"",barcode:""});
     const [orderList, setOrderList] = useState([]);
     const [tempItem, setTempItem] = useState(null);
     const [totalOrderSum, setTotalOrderSum] = useState(0);
     const [payedCash, setPayedCash] = useState('');
     const [change, setChange] = useState('');
+    const [open, setOpen] = React.useState(false);
     
     const history = useHistory();
     const scanInputRef = React.createRef();
-
-    useEffect(async () => {
-        // do request
-        const data = await new Promise((res) => {
-            setTimeout(() => res(INITIAL_MOCK_DATA), 2000)
-        })
-        setProductsList(data);
-    }, [])
 
     useEffect(() => {
         scanInputRef.current.focus();
@@ -84,7 +40,7 @@ const UserUIF = () => {
     const handleSearchInput = (event) => {
         let value = event.target.value;
 
-        if (value === "" || /^[a-zA-Z0-9]+$/.test(value)) {
+        if (value === "" || /^[0-9]+$/.test(value)) {
             setSearchValue(value)
         }
     }
@@ -96,17 +52,19 @@ const UserUIF = () => {
         }
 
     }
-
     const productCountRef = React.createRef();
 
-    const handleProductSelect = (event) => {
-        setTempItem({
-            name: event.target.parentNode.children[0].innerText,
-            price: event.target.parentNode.children[2].innerText,
-            totalCount: event.target.parentNode.children[1].innerText
-        })
-        setProductCount(1);
-        productCountRef.current.focus();
+    const handleSearchSubmit = (event) => {
+      if (event.key == 'Enter') {
+        Api.get("api/product/".concat(searchValue))
+              .then((data) => {
+                console.log(data)
+                setProduct({name: data.data.brand + " " + data.data.productName, count : data.data.quantity, price: data.data.salePrice, barcode: data.data.barcode});
+                setTempItem({name: data.data.brand + " " + data.data.productName, count : data.data.quantity, price: data.data.salePrice, barcode: data.data.barcode});
+              })
+              .catch((err) => console.log(err));
+              productCountRef.current.focus();
+      }
     }
 
     const handleProductSubmit = (event) => {
@@ -118,12 +76,16 @@ const UserUIF = () => {
             } else {
                 setOrderList([...orderList, {
                     name: tempItem.name,
+                    barcode: tempItem.barcode,
                     count: event.target.value,
-                    price: tempItem.price * event.target.value
+                    price: tempItem.price * event.target.value,
+  
                 }]);
                 setTotalOrderSum(totalOrderSum+(event.target.value*tempItem.price));
                 setTempItem(null);
                 setProductCount("");
+                setSearchValue("");
+                setProduct({name: "",count:"",price:"",barcode:""});
                 scanInputRef.current.focus();
             }
 
@@ -137,12 +99,13 @@ const UserUIF = () => {
 
         
         let name = event.target.parentNode.children[0].innerText;
-        let price =  event.target.parentNode.children[2].innerText;
-        let count = event.target.parentNode.children[1].innerText;
+        let barcode = event.target.parentNode.children[1].innerText;
+        let price =  event.target.parentNode.children[3].innerText;
+        let count = event.target.parentNode.children[2].innerText;
 
         let tempOrderSum = totalOrderSum-(price);
 
-        let index = [...orderList].reverse().findIndex(item => item.name == name && item.count== count);
+        let index = [...orderList].reverse().findIndex(item => item.count== count && item.barcode == barcode);
 
         orderList.splice(orderList.length - 1 - index ,1)
         setOrderList(orderList);
@@ -180,7 +143,10 @@ const UserUIF = () => {
             if(orderList.length > 0 && change >= 0)
             {
                 // Do post request call to endpoint
-                alert("Data is added to database! The change is " + change);
+                let username = localStorage.getItem("username");
+                Api.post("/api/sale",{username,totalOrderSum,orderList})
+                .then(res => handleClickOpen())
+                .catch(err => console.log(err))
                 setOrderList([]);
                 setPayedCash('');
                 setTotalOrderSum(0);
@@ -197,9 +163,17 @@ const UserUIF = () => {
 
     }
 
+    const handleClickOpen = () => {
+      setOpen(true);
+  };
+
+  const handleClose = () => {
+      setOpen(false);
+  };
+
     return ( <div id="userMain">
   <div className="header">
-    <div className="information">Welcome{cashier} </div>
+    <div className="information">Welcome {cashier} </div>
     <div className="menu">
       <div className="contacts">
         <div>Technicalsupport:{technicalSupportNumber}</div>
@@ -213,18 +187,19 @@ const UserUIF = () => {
   <div className="userContainer">
     <div className="box leftBox">
       <div className="dropList">
-        <input type="search" placeholder="Scan the bar code" name="searchBox" value={searchValue}onChange={handleSearchInput}required ref={scanInputRef}></input>
+        <input type="search" placeholder="Scan the bar code" name="searchBox" value={searchValue}onChange={handleSearchInput} onKeyDown={handleSearchSubmit} required ref={scanInputRef}></input>
         <div className="productList">
           <table className="productTable">
             <tr>
               <th>Name</th>
               <th>Count</th>
               <th>Price</th>
-            </tr>{productsList.map(product=> <tr className="productRow" onClick={handleProductSelect}>
+            </tr>
+            <tr>
               <td>{product.name}</td>
               <td>{product.count}</td>
               <td>{product.price}</td>
-            </tr>)}
+            </tr>
           </table>
         </div>
       </div>
@@ -239,10 +214,12 @@ const UserUIF = () => {
         <table className="orderTable">
           <tr>
             <th>Name</th>
+            <th>Barcode</th>
             <th>Count</th>
             <th>Price</th>
           </tr>{orderList.map(product=> <tr className="orderRow">
             <td>{product.name}</td>
+            <td>{product.barcode}</td>
             <td>{product.count}</td>
             <td>{product.price}</td>
             <td onClick={handleOrderListProductDelete}>X </td>
@@ -262,6 +239,26 @@ const UserUIF = () => {
       </div>
     </div>
   </div>
+  <Dialog
+                    open={open}
+                    onClose={handleClose}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title">
+                    {"Success"}
+                    </DialogTitle>
+                    <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        Data is added to database
+                    </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                    <Button onClick={handleClose} autoFocus>
+                        OK
+                    </Button>
+                    </DialogActions>
+                </Dialog>
 </div>
     );
 

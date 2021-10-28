@@ -7,12 +7,6 @@ import Api from "../api/Api";
 
 function Products({ pro, setPro }) {
   useEffect(() => {
-    /*fetch("http://192.168.88.92:8085/api/product")
-      .then((response) => response.json())
-      .then((pro) => {
-        setPro(pro);
-      })
-      .catch((err) => console.log(err));*/
       Api.get('/api/product')
       .then((data) => {
         console.log(data)
@@ -48,13 +42,13 @@ function Products({ pro, setPro }) {
           <tr>
            <td>{item.productName}</td><td>  {item.quantity}</td><td>  {item.sellPrice}</td><td> {item.unitOfMeasurement}</td><td> {item.name} </td><td>{item.barcode}</td>
            <td>
-            <Button
+            {/* <Button
               size="large"
               className="deleteButton"
               variant="outlined"
               startIcon={<DeleteIcon />}
               onClick={() => handleOnDelete(item.barcode)}
-            />
+            /> */}
             </td>
           </tr>
         ))}

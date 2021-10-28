@@ -23,4 +23,8 @@
   .supplierList .deleteButton:hover {
       background-color: lightslategray;
     }
+    
+.supplierList .dashboard {
+  height: 30%;
+}
   
