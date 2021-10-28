@@ -48,13 +48,13 @@ function Products({ pro, setPro }) {
           <tr>
            <td>{item.productName}</td><td>  {item.quantity}</td><td>  {item.sellPrice}</td><td> {item.unitOfMeasurement}</td><td> {item.name} </td><td>{item.barcode}</td>
            <td>
-            <Button
+            {/* <Button
               size="large"
               className="deleteButton"
               variant="outlined"
               startIcon={<DeleteIcon />}
               onClick={() => handleOnDelete(item.barcode)}
-            />
+            /> */}
             </td>
           </tr>
         ))}

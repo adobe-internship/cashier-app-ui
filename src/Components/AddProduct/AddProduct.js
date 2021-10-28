@@ -105,6 +105,13 @@ function AddProduct({setPro}) {
         label="Sell Price"
         variant="outlined"
       />
+      <TextField
+        id="barcode"
+        value={barcode}
+        onChange={(e) => setBarcode(e.target.value)}
+        label="Barcode"
+        variant="outlined"
+      />
       <Button variant="outlined" onClick={handleSubmit} on color="success">
         Save
       </Button>

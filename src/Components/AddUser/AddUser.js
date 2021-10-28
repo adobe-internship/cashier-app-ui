@@ -5,6 +5,11 @@ import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
 import Api from "../../api/Api";
 //import axios, { Axios } from 'axios'
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 
 
@@ -17,6 +22,15 @@ function AddUser({setData}) {
   const [lastName, setLastName] = React.useState("");
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [open, setOpen] = React.useState(false);
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
  
 
 
@@ -34,6 +48,7 @@ function AddUser({setData}) {
     })*/
     Api.post("/api/employee",body).then((res) => {
       setData(prev=>[...prev, body])
+      handleClickOpen()
     }).catch((err)=>console.log(err))
     setName("")
     setLastName("")
@@ -87,6 +102,26 @@ function AddUser({setData}) {
       <Button variant="outlined" onClick={handleSubmit} on color="success">
         Save
       </Button>
+      <Dialog
+                    open={open}
+                    onClose={handleClose}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title">
+                    {"Success"}
+                    </DialogTitle>
+                    <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        Employee added successfully
+                    </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                    <Button onClick={handleClose} autoFocus>
+                        OK
+                    </Button>
+                    </DialogActions>
+                </Dialog>
     </div>
   );
 }
