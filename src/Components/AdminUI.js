@@ -13,66 +13,88 @@ import {
 import SearchBar from "./SearchBar";
 import productData from "../Data.json";
 import AddUser from "./AddUser/AddUser";
+import AddSupplier from "./AddSupplier/AddSupplier";
+import AddProduct from "./AddProduct/AddProduct";
+import BarChart from "./Dashboard/BarChart";
 import { useState } from "react";
 import { useHistory } from "react-router-dom";
 
 function AdminUI(){
-    const [data, setData] = useState([]);
-    const history = useHistory();
-    const [showUsername, setShowUsername] = useState(localStorage.getItem("firstname") + " " + localStorage.getItem("lastname"));
+  const [data, setData] = useState([]);
+  const [sup, setSup] = useState([]);
+  const [pro, setPro] = useState([]);
+  const [pathname, setPathname] = useState('');
+  const history = useHistory();
+  console.log('pathname',pathname);
 
-    const handleLogOut = (event) => {
-        
-        localStorage.clear();
-        history.push('/login');
+
+  const handleLogOut = (event) => {
+    localStorage.clear();
+    history.push("/login");
+  }
   
-      }
-
-    return (
-        <Router>
-          <div className="container">
-            <header>
-                <div className="welcome">
-                    Welcome {showUsername}
-                </div>
-                <div className="logOut">
-                    <button onClick={handleLogOut}>Log Out</button>
-                </div>
-            </header>
-            <div>
-              <Sidebar />
-              <div className="main-content">
-                <div className="lists-search-container">
-                  <SearchBar placeholder="Search..." data={productData} />
-                  <div className="lists-container">
-                    <Switch>
-                      <Route path="/suppliers" component={Suppliers} />
-                      <Route path="/products" component={Products} />
-                      <Route path="/employees">
-                        <Employees data={data} setData={setData} />
-                      </Route>
-                      <Route  path="/">
-                        <Redirect to="/dashboard" />
-                      </Route>
-                    </Switch>
-                  </div>
-                </div>
-                <div className="add-stuff-container">
-                  <button className="add-stuff">Add</button>
-                  <Switch>
-                    <Route path="/suppliers" />
-                    <Route path="/employees">
-                      <AddUser setData={setData} />
+  return (
+    <Router>
+      <div className="container">
+        <header>
+          <div className="welcomeInfo">
+            Welcome {localStorage.getItem("firstname").concat(" ").concat(localStorage.getItem("lastname"))}
+          </div>
+          <div className="logOut">
+            <button onClick={handleLogOut}>Log Out</button>
+          </div>
+        </header>
+        <div>
+          <Sidebar setPathname={setPathname} />
+          <div className="main-content">
+            <div className="lists-search-container">
+            <SearchBar placeholder="Search..." data={productData} />
+              <div className="lists-container">
+                <Switch>
+                  <Route path="/suppliers" >
+                  <Suppliers sup={sup} setSup={setSup} />
                     </Route>
-                    <Route path="/products" />
+                    <Route path="/products" >
+                  <Products pro={pro} setPro={setPro} />
+                    </Route>
+                  <Route path="/employees">
+                    <Employees data={data} setData={setData} />
+                  </Route>
+                  <Route path="/dashboard">
+                    <BarChart />
+                  </Route>
+                                     
+                  <Route  path="/">
+                    <Redirect to="/dashboard" />
+                  </Route>
+                  <Route  path="/adminui">
+                    <Redirect to="/dashboard" />
+                  </Route>
                   </Switch>
-                </div>
               </div>
             </div>
+            <div className="add-stuff-container ">
+              {pathname=='/dashboard' }
+              <Switch>
+                <Route path="/suppliers" >
+                <AddSupplier setSup={setSup} />
+                  </Route>
+                <Route path="/employees">
+                  <AddUser setData={setData} />
+                </Route>
+                <Route path="/products">
+                  <AddProduct setPro={setPro} />
+                </Route>
+               
+                
+              </Switch>
+            </div>
           </div>
-        </Router>
-      );
-    }
+        </div>
+      </div>
+    </Router>
+  );
+}
 
 
 export default AdminUI;

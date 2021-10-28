@@ -3,6 +3,7 @@ import "./AddUser.css";
 import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
+import Api from "../../api/Api";
 //import axios, { Axios } from 'axios'
 
 
@@ -22,13 +23,16 @@ function AddUser({setData}) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const roles = [userRole]
+    let roles = [userRole]
+    roles[0] = "ROLE_".concat(roles[0]);
     const body = {firstName, lastName, username, password, roles};
-    fetch("http://192.168.88.92:8085/api/employee", {
+    
+    /*fetch("http://192.168.88.92:8085/api/employee", {
       method: "POST",
       headers: {"content-Type": "application/json", "authorization" : localStorage.getItem("token")},
       body: JSON.stringify(body)
-    }).then((res) => {
+    })*/
+    Api.post("/api/employee",body).then((res) => {
       setData(prev=>[...prev, body])
     }).catch((err)=>console.log(err))
     setName("")

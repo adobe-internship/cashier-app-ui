@@ -52,9 +52,9 @@ const INITIAL_MOCK_DATA = [{
 
 const UserUIF = () => {
 
-    const [cashier, setCashier] = useState("Cashier1");
-    const [technicalSupportNumber, setTechnicalSupportNumber] = useState("0XX-XX-XX-XX")
-    const [managerNumber, setManagerNumber] = useState ("0XX-XX-XX-XX")
+    const [cashier, setCashier] = useState(localStorage.getItem("firstname").concat(" ").concat(localStorage.getItem("lastname")));
+    const [technicalSupportNumber, setTechnicalSupportNumber] = useState("0XX-XX-XX-XX");
+    const [managerNumber, setManagerNumber] = useState ("0XX-XX-XX-XX");
     const [searchValue, setSearchValue] = useState('');
     const [productCount, setProductCount] = useState('');
     const [productsList, setProductsList] = useState([]);

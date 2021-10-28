@@ -1,16 +1,50 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import "../Styles/Login.css";
 import { useHistory } from "react-router-dom";
 import axios from 'axios';
 import jwt from 'jwt-decode';
 import Api from '../api/Api';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 const Login = () => {
 
+    const history = useHistory();
+
+    if(localStorage.getItem("token"))
+    {
+        let decodedToken = jwt(localStorage.getItem("token"));
+        localStorage.setItem("username",decodedToken.username);
+        localStorage.setItem("firstname",decodedToken.firstName);
+        localStorage.setItem("lastname",decodedToken.lastName);
+        let role = decodedToken.authorities;
+    
+        if(role == "ROLE_ADMIN")
+        {
+            history.push("/adminui");
+        }
+        else if(role =="ROLE_CASHIER")
+        {
+            history.push("/userui");
+        }
+    }
+
     const [username,setUsername] = useState("");
     const [password,setPassword] = useState("");
+    const [open, setOpen] = React.useState(false);
 
-    const history = useHistory();
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
 
     const handleUsernameChange = (event) => {
         setUsername(event.target.value);
@@ -27,45 +61,30 @@ const Login = () => {
         let body = {"username" : username,
         "password" :password};
 
-        let token;
-debugger
-        const p = Api.post('/api/auth/login', body)
-        // fetch('http://192.168.88.92:8085/api/auth/login', {method: 'POST', body: JSON.stringify(body)})  
-        // .then(r => r.json()) 
-        window.p = p
-        p.then((data) => {
-            debugger
-            console.log(data);
-            token = data.data.token;
-            localStorage.setItem("token",token);
+        Api.post("/api/auth/login", body)
+        .then(data =>{
+                localStorage.setItem("token",data.data.token);
+                let decodedToken = jwt(localStorage.getItem("token"));
+                localStorage.setItem("username",decodedToken.username);
+                localStorage.setItem("firstname",decodedToken.firstName);
+                localStorage.setItem("lastname",decodedToken.lastName);
+                let role = decodedToken.authorities;
+            
+                if(role == "ROLE_ADMIN")
+                {
+                    history.push("/adminui");
+                }
+                else if(role =="ROLE_CASHIER")
+                {
+                    history.push("/userui");
+                }
+            }
+            )
+        .catch(err => 
+            handleClickOpen()
+        )
 
-        let decodedToken = jwt(token);
-        localStorage.setItem("username",decodedToken.username);
-        localStorage.setItem("firstname",decodedToken.firstName);
-        localStorage.setItem("lastname",decodedToken.lastName);
-        let role = decodedToken.authorities;
-        if(role == "ROLE_ADMIN")
-        {
-            history.push("/adminui");
-        }
-        else if(role =="ROLE_CASHIER")
-        {
-            history.push("/userui");
-        }
-        else{
-
-        }
-          })
-          .catch((err) => console.log(err));; 
-
-          
-
-        //let token = "eyJhbGciOiJIUzI1NiJ9.eyJhdXRob3JpdGllcyI6WyJST0xFX0FETUlOIl0sInVzZXJuYW1lIjoicnViZW4iLCJmaXJzdE5hbWUiOiJSdWJlbiIsImxhc3ROYW1lIjoiQmFsYXlhbiJ9.KV7nf-M33ELZPUGWGjwEFnE-Dx_bXlZBEShRR8QeS24";
-        
-        
     }
-
-    
 
     return(
 
@@ -79,6 +98,27 @@ debugger
 
                     <button type="submit">Submit</button>
                 </form>
+
+                <Dialog
+                    open={open}
+                    onClose={handleClose}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title">
+                    {"Bad credentials"}
+                    </DialogTitle>
+                    <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        Wrong username or password
+                    </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                    <Button onClick={handleClose} autoFocus>
+                        OK
+                    </Button>
+                    </DialogActions>
+                </Dialog>
 
         </div>
 

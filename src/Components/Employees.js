@@ -26,7 +26,9 @@ function Employees({ data, setData }) {
 
   const handelOnDelete = (username) => {
     const url = "http://192.168.88.92:8085/api/employee/delete/".concat(username);
-    fetch(url, { method: "DELETE" , headers : {"authorization":localStorage.getItem("token")}})
+    /*fetch(url, { method: "DELETE" , headers : {"authorization":localStorage.getItem("token")}})*/
+        
+      Api.delete(url) 
       .then((res) => {
         setData(data.filter((row) => row.username !== username));
       })
@@ -35,10 +37,17 @@ function Employees({ data, setData }) {
 
   return (
     <div className="employeeList">
+      <table className="generalTable">
+        <tr>
+          <th>Firstname</th>
+          <th>Lastname</th>
+          <th>Role</th>
+        </tr>
       {data &&
         data.map((item) => (
-          <li>
-            {item.firstName} {item.lastName} {item.roles}
+          <tr>
+            <td>{item.firstName}</td> <td>{item.lastName}</td><td> {item.roles}</td>
+            <td>
             <Button
               size="large"
               className="deleteButton"
@@ -46,8 +55,10 @@ function Employees({ data, setData }) {
               startIcon={<DeleteIcon />}
               onClick={() => handelOnDelete(item.username)}
             />
-          </li>
+            </td>
+          </tr>
         ))}
+        </table>
     </div>
   );
 }

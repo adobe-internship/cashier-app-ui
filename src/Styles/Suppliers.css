@@ -3,7 +3,7 @@
     height: 100%;
     overflow: hidden;
     overflow-y: auto;
-    background-color: lightgray;
+    /*background-color: lightgray;*/
   }
   .supplierList li {
       width: 100%;
@@ -16,4 +16,11 @@
   .supplierList li:hover {
       background-color: gray;
   }
+  
+.supplierList .deleteButton {
+    margin-right: 3px;
+  }
+  .supplierList .deleteButton:hover {
+      background-color: lightslategray;
+    }
   
