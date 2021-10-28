@@ -7,12 +7,6 @@ import Api from "../api/Api";
 
 function Products({ pro, setPro }) {
   useEffect(() => {
-    /*fetch("http://192.168.88.92:8085/api/product")
-      .then((response) => response.json())
-      .then((pro) => {
-        setPro(pro);
-      })
-      .catch((err) => console.log(err));*/
       Api.get('/api/product')
       .then((data) => {
         console.log(data)
